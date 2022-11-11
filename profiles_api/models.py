@@ -9,7 +9,7 @@ from django.contrib.auth.models import BaseUserManager
 # Create your models here.
 # Inherit from base user manager which is the DEFAULT user manager that comes
 # with Django
-class UserProfileManager():
+class UserProfileManager(BaseUserManager):
     """Manager for user profiles"""
     # Managers: you specify some functions within the manager that can be used
     # to manipulate objects within
@@ -24,7 +24,7 @@ class UserProfileManager():
         # 1st half, case-sensitive, 2nd half case-insensitive
         # 1st half by Gmail and Hotmaill are all lower case by default for
         # convience, but just know it is possible it's case-sensitive
-        email = self.normalized_email(email)
+        email = self.normalize_email(email)
 
         # Creates a new model that the user manager is representing
         # New model object setting the email and the name
