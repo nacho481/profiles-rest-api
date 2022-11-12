@@ -7,6 +7,11 @@ from rest_framework.views import APIView
 # it's expecting it to return the standard response object
 from rest_framework.response import Response
 
+# List of handy HTTP status codes that you can use when returning responses
+# from your API
+from rest_framework import status
+from profiles_api import serializers
+
 
 # Creates a new class based on the Django APIView class
 # Allows us to define the application logic for our "endpoint"
@@ -15,7 +20,9 @@ from rest_framework.response import Response
 # view for the HTTP request that you make.
 class HelloAPIView(APIView):
     """Test API View"""
-
+    # Configures the API View to have the serializer class that we created
+    # in the previous video
+    serializer_class = serializers.HelloSerializer
     # We'll be making an HTTP GET request
     def get(self, request, format=None):
         "Returns a list of API view features"
@@ -41,5 +48,43 @@ class HelloAPIView(APIView):
         ]
 
         return Response({'message: ': 'Hello!', 'an_apiview': an_apiview})
+
+    def post(self, request):
+        """Create a hello message with our name"""
+        # First retrieve the serializer then pass in the data that was
+        # sent in the request
+        # self.serializer_class() is a function that comes with the
+        # API view retrieves the configured serializer class for our view
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            # retrieves the name field
+            name = serializer.validated_data.get('name')
+            # using f string you can use the {} braces to insert a variable
+            # into your string
+            message = f'Hello {name}'
+            return Response({'message': message})
+            # return this if the request is not valid
+        else:
+            # provide errors, returns HTTP 200 request, change to 400 bad request
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+                )
+
+    # used to update an object
+    # done to a pk or primary key, we put it to none for now in case we don't
+    # want to do that
+    def put(self, request, pk=None):
+        """Handle updating an object"""
+        return Response({'method': 'PUT'})
+
+    def patch(self, request, pk=None):
+        """Handle a partial update of an object"""
+        return Response({'method': 'PATCH'})
+
+    def delete(self, request, pk=None):
+        """Delete an object"""
+        return Response({'method': 'DELETE'})
 
 # Create your views here.
