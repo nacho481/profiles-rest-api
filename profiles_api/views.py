@@ -14,7 +14,8 @@ from rest_framework import status
 # Generates a random token string when the user logs in. Every request adds
 # the token string to the request, effectively a password
 
-from rest_framework.TokenAuthentication import TokenAuthentication
+from rest_framework.authentication import TokenAuthentication
+from rest_framework import filters
 from profiles_api import serializers
 from profiles_api import models
 from profiles_api import permissions
@@ -151,5 +152,10 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = models.UserProfile.objects.all()
 
     # Add auth and perms
-    authentication_classes = (TokenAuthentication, )
+    # comma indicates it's a tupple and not a single item
+    authentication_classes = (TokenAuthentication,)
     permission_classes = (permissions.UpdateOwnProfile,)
+    filter_backends = (filters.SearchFilter,)
+
+    # Tells the filter_backends which fields we're going to make searchable
+    search_fields = ('name', 'email',)
