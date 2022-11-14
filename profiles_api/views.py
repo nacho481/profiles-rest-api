@@ -10,7 +10,15 @@ from rest_framework import viewsets
 # List of handy HTTP status codes that you can use when returning responses
 # from your API
 from rest_framework import status
+
+# Generates a random token string when the user logs in. Every request adds
+# the token string to the request, effectively a password
+
+from rest_framework.TokenAuthentication import TokenAuthentication
 from profiles_api import serializers
+from profiles_api import models
+from profiles_api import permissions
+
 
 
 # Creates a new class based on the Django APIView class
@@ -135,3 +143,13 @@ class HelloViewSet(viewsets.ViewSet):
     def destroy(self, request, pk=None):
         """Handle removing an object"""
         return Response({'http_method': 'DELETE'})
+
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """Handle creating and updating profiles"""
+    serializer_class = serializers.UserProfileSerializer
+    queryset = models.UserProfile.objects.all()
+
+    # Add auth and perms
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (permissions.UpdateOwnProfile,)

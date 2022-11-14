@@ -18,10 +18,13 @@ router = DefaultRouter()
 # this is used to retrieve URLs from our router
 router.register('hello-ViewSet', views.HelloViewSet, base_name='hello-viewset')
 
+# Register model viewset
+# we don't need to specify a base_name object b/c we declared a query set object
+router.register('profile', views.UserProfileViewSet)
+
 urlpatterns = [
     path('hello-view/', views.HelloAPIView.as_view()),
     path('', include(router.urls))
-
 ]
 
 # To provide a ViewSet you have to use a "router" which is a class provided
